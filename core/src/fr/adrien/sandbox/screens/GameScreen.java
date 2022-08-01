@@ -1,6 +1,7 @@
 package fr.adrien.sandbox.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -71,6 +72,22 @@ public class GameScreen implements Screen {
 
         game.batch.end();
 
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            dog.x -= 200 * Gdx.graphics.getDeltaTime();
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            dog.x += 200 * Gdx.graphics.getDeltaTime();
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            dog.y += 200 * Gdx.graphics.getDeltaTime();
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            dog.y -= 200 * Gdx.graphics.getDeltaTime();
+        }
+
     }
 
     /**
@@ -111,6 +128,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void dispose() {
-
+        grassImage.dispose();
+        dogImage.dispose();
     }
 }
