@@ -6,40 +6,33 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
 import fr.adrien.sandbox.Sandbox;
+import fr.adrien.sandbox.bo.Dog;
 
 public class GameScreen implements Screen {
     final Sandbox game;
     OrthographicCamera camera;
+
+    Dog dog;
     Texture grassImage;
-    Texture dogImage;
-    Rectangle grassBackgroung;
-    Rectangle dog;
+    Rectangle grassBackground;
 
     public GameScreen(final Sandbox game) {
         this.game = game;
 
+        this.dog = new Dog(100, 150, 100, 100);
+
         grassImage = new Texture(Gdx.files.internal("grass.png"));
-        dogImage = new Texture(Gdx.files.internal("dog.png"));
 
         // create the camera and the SpriteBatch
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1600, 800);
 
-        grassBackgroung = new Rectangle();
-        grassBackgroung.height = 800;
-        grassBackgroung.width = 1600;
-        grassBackgroung.x = 0;
-        grassBackgroung.y = 0;
-
-
-        dog = new Rectangle();
-        dog.height = 100;
-        dog.width = 150;
-        dog.x = 100;
-        dog.y = 100;
+        grassBackground = new Rectangle();
+        grassBackground.height = 800;
+        grassBackground.width = 1600;
+        grassBackground.x = 0;
+        grassBackground.y = 0;
 
     }
 
@@ -66,26 +59,26 @@ public class GameScreen implements Screen {
 
         game.batch.begin();
 
-        game.batch.draw(grassImage, grassBackgroung.x, grassBackgroung.y, grassBackgroung.width, grassBackgroung.height);
+        game.batch.draw(grassImage, grassBackground.x, grassBackground.y, grassBackground.width, grassBackground.height);
 
-        game.batch.draw(dogImage, dog.x, dog.y, dog.width, dog.height);
+        game.batch.draw(dog.getDogImage(), dog.getDogRectangle().x, dog.getDogRectangle().y, dog.getDogRectangle().getWidth(), dog.getDogRectangle().getHeight());
 
         game.batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            dog.x -= 200 * Gdx.graphics.getDeltaTime();
+            dog.getDogRectangle().x -= 200 * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            dog.x += 200 * Gdx.graphics.getDeltaTime();
+            dog.getDogRectangle().x += 200 * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            dog.y += 200 * Gdx.graphics.getDeltaTime();
+            dog.getDogRectangle().y += 200 * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            dog.y -= 200 * Gdx.graphics.getDeltaTime();
+            dog.getDogRectangle().y -= 200 * Gdx.graphics.getDeltaTime();
         }
 
     }
@@ -129,6 +122,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         grassImage.dispose();
-        dogImage.dispose();
+        dog.getDogImage().dispose();
     }
 }
