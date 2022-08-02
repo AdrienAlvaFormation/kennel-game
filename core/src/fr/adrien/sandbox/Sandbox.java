@@ -11,7 +11,6 @@ import fr.adrien.sandbox.screens.GameScreen;
 public class Sandbox extends Game {
 
 	public SpriteBatch batch;
-
 	public BitmapFont font;
 
 	public void create() {
