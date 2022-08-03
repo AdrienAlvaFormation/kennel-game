@@ -23,7 +23,6 @@ public class Dog {
     private Texture walkSheet;
     private float stateTime;
     private float xBuffer;
-
     private float yBuffer;
 
     // CONSTRUCTOR

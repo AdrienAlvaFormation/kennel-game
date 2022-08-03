@@ -13,7 +13,7 @@ import fr.adrien.sandbox.bo.LevelBackground;
 
 public class GameScreen implements Screen {
 
-    //
+    // ATTRIBUTES
 
     final Sandbox game;
     public boolean hasWon;
@@ -45,6 +45,8 @@ public class GameScreen implements Screen {
 
 
     }// Eo constructor
+
+    // LIBGDX METHODS
 
     @Override
     public void show() {
@@ -130,7 +132,6 @@ public class GameScreen implements Screen {
         if (!this.hasWon) {
             dog.move();
         }
-
 
     }// Eo render()
 
