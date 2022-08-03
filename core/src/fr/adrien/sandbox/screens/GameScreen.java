@@ -18,7 +18,6 @@ public class GameScreen implements Screen {
     LevelBackground lvlBackground;
     Dog dog;
     private final String GRASS_BACKGROUND_FILENAME = "grass.png";
-    private float xBuffer;
 
     private TextureRegion frameBuffer = null;
 
@@ -36,9 +35,7 @@ public class GameScreen implements Screen {
 
         System.out.println(camera.viewportHeight);
 
-
-
-    }
+    }// Eo constructor
 
     /**
      *
@@ -53,8 +50,6 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render(float delta) {
-
-
 
         // tell the camera to update its matrices.
         camera.update();
@@ -74,18 +69,7 @@ public class GameScreen implements Screen {
             frameBuffer = currentFrame;
         }
 
-        // TODO refacto -> to Dog
-        for (TextureRegion frame: dog.getWalkAnimation().getKeyFrames()) {
-            if(dog.getDogRectangle().getX() < xBuffer && !frame.isFlipX()) {
-                frame.flip(true, false);
-            }
-        }
-
-        for (TextureRegion frame: dog.getWalkAnimation().getKeyFrames()) {
-            if(dog.getDogRectangle().getX() > xBuffer && frame.isFlipX()) {
-                frame.flip(true, false);
-            }
-        }
+        dog.flip(); // flip character sprite to look at movement direction
 
         game.batch.draw(lvlBackground.getBackgroundImage(),
                         lvlBackground.getBackgroundRectangle().x,
@@ -99,42 +83,33 @@ public class GameScreen implements Screen {
                         lvlBackground.getFinishRectangle().width,
                         lvlBackground.getFinishRectangle().height);
 
-        if(dog.getDogRectangle().getX() != this.xBuffer) {
+        if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
             game.batch.draw(currentFrame,
                     dog.getDogRectangle().getX(),
                     dog.getDogRectangle().getY(),
                     dog.getDogRectangle().getWidth(),
                     dog.getDogRectangle().getHeight());
 
-            frameBuffer = currentFrame;
-
+            frameBuffer = currentFrame; // dans le cas ou le personnage bouge on actualise le frameBuffer
+                                       // pour pouvoir le figer quand il s'arrete.
         } else {
-
             game.batch.draw(frameBuffer,
                     dog.getDogRectangle().getX(),
                     dog.getDogRectangle().getY(),
                     dog.getDogRectangle().getWidth(),
                     dog.getDogRectangle().getHeight());
-
         }
 
         game.batch.end();
 
-
-
-        if(dog.getDogRectangle().getX() != this.xBuffer) {
-            this.xBuffer = dog.getDogRectangle().getX();
+        // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
+        if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
+            dog.setxBuffer(dog.getDogRectangle().getX());
         }
 
-
-
-        // TODO refacto -> to Dog
         dog.move();
 
-
-
-
-    }
+    }// Eo render()
 
     /**
      * @param width

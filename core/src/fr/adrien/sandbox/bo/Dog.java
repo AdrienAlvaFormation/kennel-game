@@ -17,14 +17,15 @@ public class Dog {
     private final int DOG_HEIGHT = 200;
     private final int DOG_WIDTH = 125;
 
+
     // ANIMATION
-    // Constant rows and columns of the sprite sheet
-    private static final int FRAME_COLS = 6, FRAME_ROWS = 5;
+    private static final int FRAME_COLS = 6, FRAME_ROWS = 5;// Constant rows and columns of the sprite sheet
     private Animation<TextureRegion> walkAnimation;
     private Texture walkSheet;
     private float stateTime;
+    private float xBuffer;
 
-    private boolean goingRight;
+    // CONSTRUCTOR
 
     public Dog(int height, int width, int xPos, int yPos) {
 
@@ -34,13 +35,11 @@ public class Dog {
 
         this.dogSpeed = 300;
 
-        this.goingRight = true;
-
         this.loadAnimation();
 
-
-
     }
+
+    // METHODS
 
     /**
      * Dog's movements
@@ -49,7 +48,6 @@ public class Dog {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             this.dogRectangle.x -= this.dogSpeed * Gdx.graphics.getDeltaTime();
-            this.setGoingRight(false);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -79,6 +77,22 @@ public class Dog {
 
         if (dogRectangle.y > 600) {
             dogRectangle.y = 600;
+        }
+
+    }
+
+    public void flip() {
+
+        for (TextureRegion frame: this.walkAnimation.getKeyFrames()) {
+            if(this.dogRectangle.getX() < xBuffer && !frame.isFlipX()) {
+                frame.flip(true, false);
+            }
+        }
+
+        for (TextureRegion frame: this.walkAnimation.getKeyFrames()) {
+            if(this.dogRectangle.getX() > xBuffer && frame.isFlipX()) {
+                frame.flip(true, false);
+            }
         }
 
     }
@@ -162,11 +176,11 @@ public class Dog {
         this.walkSheet = walkSheet;
     }
 
-    public boolean isGoingRight() {
-        return goingRight;
+    public float getxBuffer() {
+        return xBuffer;
     }
 
-    public void setGoingRight(boolean goingRight) {
-        this.goingRight = goingRight;
+    public void setxBuffer(float xBuffer) {
+        this.xBuffer = xBuffer;
     }
 }// Eo Dog class
