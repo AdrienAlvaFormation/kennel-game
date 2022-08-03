@@ -8,14 +8,23 @@ public class LevelBackground {
 
     private Texture backgroundImage;
     private Rectangle backgroundRectangle;
-    private final int X_POS = 0;
-    private final int Y_POS = 0;
+    private Texture finishLine;
+    private Rectangle finishRectangle;
+    private final int BCK_X_POS = 0;
+    private final int BCK_Y_POS = 0;
 
-    public LevelBackground(int height, int width, String fileName) {
+
+    public LevelBackground(int height, int width, String fileName, float cameraHeight) {
 
         this.setBackgroundImage(fileName);
 
         this.setBackgroundRectangle(height, width);
+
+        this.setFinishLine();
+
+        this.setFinishRectangle(cameraHeight);
+
+        System.out.println("Height : " + Gdx.graphics.getHeight());
 
     }
 
@@ -37,10 +46,29 @@ public class LevelBackground {
         Rectangle background = new Rectangle();
         background.height = height;
         background.width = width;
-        background.x = X_POS;
-        background.y = Y_POS;
+        background.x = BCK_X_POS;
+        background.y = BCK_Y_POS;
         this.backgroundRectangle = background;
     }
 
+    public Texture getFinishLine() {
+        return finishLine;
+    }
 
+    private void setFinishLine() {
+        this.finishLine = new Texture(Gdx.files.internal("finish.png"));
+    }
+
+    public Rectangle getFinishRectangle() {
+        return finishRectangle;
+    }
+
+    private void setFinishRectangle(float cameraHeight) {
+        Rectangle rec = new Rectangle();
+        rec.height = cameraHeight;
+        rec.width = 200;
+        rec.x = 1400;
+        rec.y = 0;
+        this.finishRectangle = rec;
+    }
 }// Eo LevelBackground class

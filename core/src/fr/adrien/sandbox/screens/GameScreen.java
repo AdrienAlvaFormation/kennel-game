@@ -26,13 +26,17 @@ public class GameScreen implements Screen {
 
         this.game = game;
 
-        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME);
-
-        this.dog = new Dog(200, 150, 100, 100);
-
         // create the camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1600, 800);
+
+        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
+
+        this.dog = new Dog(200, 150, 100, 100);
+
+        System.out.println(camera.viewportHeight);
+
+
 
     }
 
@@ -83,12 +87,17 @@ public class GameScreen implements Screen {
             }
         }
 
-
         game.batch.draw(lvlBackground.getBackgroundImage(),
                         lvlBackground.getBackgroundRectangle().x,
                         lvlBackground.getBackgroundRectangle().y,
                         lvlBackground.getBackgroundRectangle().width,
                         lvlBackground.getBackgroundRectangle().height);
+
+        game.batch.draw(lvlBackground.getFinishLine(),
+                        lvlBackground.getFinishRectangle().x,
+                        lvlBackground.getFinishRectangle().y,
+                        lvlBackground.getFinishRectangle().width,
+                        lvlBackground.getFinishRectangle().height);
 
         if(dog.getDogRectangle().getX() != this.xBuffer) {
             game.batch.draw(currentFrame,
