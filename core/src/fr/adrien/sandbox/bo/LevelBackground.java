@@ -24,8 +24,6 @@ public class LevelBackground {
 
         this.setFinishRectangle(cameraHeight);
 
-        System.out.println("Height : " + Gdx.graphics.getHeight());
-
     }
 
     // ACCESSORS

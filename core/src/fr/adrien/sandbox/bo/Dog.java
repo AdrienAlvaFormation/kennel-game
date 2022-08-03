@@ -17,7 +17,6 @@ public class Dog {
     private final int DOG_HEIGHT = 200;
     private final int DOG_WIDTH = 125;
 
-
     // ANIMATION
     private static final int FRAME_COLS = 6, FRAME_ROWS = 5;// Constant rows and columns of the sprite sheet
     private Animation<TextureRegion> walkAnimation;
@@ -26,7 +25,6 @@ public class Dog {
     private float xBuffer;
 
     // CONSTRUCTOR
-
     public Dog(int height, int width, int xPos, int yPos) {
 
         this.setDogImage();
@@ -95,10 +93,9 @@ public class Dog {
             }
         }
 
-    }
+    }// Eo flip()
 
     private void loadAnimation() {
-
         // Load the sprite sheet as a Texture
         walkSheet = new Texture(Gdx.files.internal("animation_sheet.png"));
 
@@ -124,7 +121,6 @@ public class Dog {
 
         // time to 0
         stateTime = 0f;
-
     }// Eo loadAnimation()
 
     // ACCESSORS
@@ -142,7 +138,6 @@ public class Dog {
     }
 
     private void setDogRectangle(int height, int width, int xPos, int yPos) {
-
         Rectangle dog = new Rectangle();
         dog.height = height;
         dog.width = width;

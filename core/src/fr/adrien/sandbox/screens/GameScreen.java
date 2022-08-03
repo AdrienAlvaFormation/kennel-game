@@ -2,21 +2,23 @@ package fr.adrien.sandbox.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import fr.adrien.sandbox.Sandbox;
 import fr.adrien.sandbox.bo.Dog;
 import fr.adrien.sandbox.bo.LevelBackground;
 
 public class GameScreen implements Screen {
     final Sandbox game;
-    OrthographicCamera camera;
-    LevelBackground lvlBackground;
-    Dog dog;
+    public BitmapFont font;
+    public OrthographicCamera camera;
+    private LevelBackground lvlBackground;
+    private Dog dog;
+
+    private GlyphLayout glyphLayout[];
     private final String GRASS_BACKGROUND_FILENAME = "grass.png";
 
     private TextureRegion frameBuffer = null;
@@ -31,9 +33,12 @@ public class GameScreen implements Screen {
 
         this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
 
-        this.dog = new Dog(200, 150, 100, 100);
+        this.dog = new Dog(200, 150, Math.round(camera.viewportWidth / 2), Math.round(camera.viewportHeight / 2));
 
-        System.out.println(camera.viewportHeight);
+        glyphLayout=new GlyphLayout[1];
+
+        glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !", Color.WHITE, 550, 600, false);
+
 
     }// Eo constructor
 
@@ -100,7 +105,17 @@ public class GameScreen implements Screen {
                     dog.getDogRectangle().getHeight());
         }
 
+        if (dog.getDogRectangle().overlaps(lvlBackground.getFinishRectangle())) {
+
+            for (int i=0;i<glyphLayout.length;i++) {
+                game.font.draw(game.batch, glyphLayout[i], camera.viewportWidth / 2 - (glyphLayout[i].width / 2), camera.viewportHeight / 2 + (glyphLayout[i].height / 2));
+            }
+
+        }
+
         game.batch.end();
+
+
 
         // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
         if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
@@ -108,6 +123,10 @@ public class GameScreen implements Screen {
         }
 
         dog.move();
+
+
+
+
 
     }// Eo render()
 
