@@ -12,20 +12,24 @@ import fr.adrien.sandbox.bo.Dog;
 import fr.adrien.sandbox.bo.LevelBackground;
 
 public class GameScreen implements Screen {
+
+    //
+
     final Sandbox game;
-    public BitmapFont font;
+    public boolean hasWon;
     public OrthographicCamera camera;
     private LevelBackground lvlBackground;
     private Dog dog;
-
     private GlyphLayout glyphLayout[];
     private final String GRASS_BACKGROUND_FILENAME = "grass.png";
-
     private TextureRegion frameBuffer = null;
+
+    // CONSTRUCTOR
 
     public GameScreen(final Sandbox game) {
 
         this.game = game;
+        this.hasWon = false;
 
         // create the camera
         camera = new OrthographicCamera();
@@ -35,16 +39,13 @@ public class GameScreen implements Screen {
 
         this.dog = new Dog(200, 150, Math.round(camera.viewportWidth / 2), Math.round(camera.viewportHeight / 2));
 
-        glyphLayout=new GlyphLayout[1];
+        this.glyphLayout = new GlyphLayout[1];
 
-        glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !", Color.WHITE, 550, 600, false);
+        glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !");
 
 
     }// Eo constructor
 
-    /**
-     *
-     */
     @Override
     public void show() {
 
@@ -83,12 +84,12 @@ public class GameScreen implements Screen {
                         lvlBackground.getBackgroundRectangle().height);
 
         game.batch.draw(lvlBackground.getFinishLine(),
-                        lvlBackground.getFinishRectangle().x,
+                        lvlBackground.getFinishRectangle().x - 200,
                         lvlBackground.getFinishRectangle().y,
-                        lvlBackground.getFinishRectangle().width,
+                        lvlBackground.getFinishRectangle().width + 200,
                         lvlBackground.getFinishRectangle().height);
 
-        if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
+        if(dog.getDogRectangle().getX() != dog.getxBuffer() || dog.getDogRectangle().getY() != dog.getyBuffer())  {
             game.batch.draw(currentFrame,
                     dog.getDogRectangle().getX(),
                     dog.getDogRectangle().getY(),
@@ -111,61 +112,48 @@ public class GameScreen implements Screen {
                 game.font.draw(game.batch, glyphLayout[i], camera.viewportWidth / 2 - (glyphLayout[i].width / 2), camera.viewportHeight / 2 + (glyphLayout[i].height / 2));
             }
 
+            this.hasWon = true;
+
         }
 
         game.batch.end();
-
-
 
         // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
         if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
             dog.setxBuffer(dog.getDogRectangle().getX());
         }
 
-        dog.move();
+        if(dog.getDogRectangle().getY() != dog.getyBuffer()) {
+            dog.setyBuffer(dog.getDogRectangle().getY());
+        }
 
-
-
+        if (!this.hasWon) {
+            dog.move();
+        }
 
 
     }// Eo render()
 
-    /**
-     * @param width
-     * @param height
-     */
     @Override
     public void resize(int width, int height) {
 
     }
 
-    /**
-     *
-     */
     @Override
     public void pause() {
 
     }
 
-    /**
-     *
-     */
     @Override
     public void resume() {
 
     }
 
-    /**
-     *
-     */
     @Override
     public void hide() {
 
     }
 
-    /**
-     *
-     */
     @Override
     public void dispose() {
         lvlBackground.getBackgroundImage().dispose();
@@ -173,4 +161,5 @@ public class GameScreen implements Screen {
         game.batch.dispose();
         dog.getWalkSheet().dispose();
     }
-}
+
+}// Eo GameScreen class

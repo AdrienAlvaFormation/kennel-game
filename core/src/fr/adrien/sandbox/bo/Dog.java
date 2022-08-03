@@ -24,6 +24,8 @@ public class Dog {
     private float stateTime;
     private float xBuffer;
 
+    private float yBuffer;
+
     // CONSTRUCTOR
     public Dog(int height, int width, int xPos, int yPos) {
 
@@ -177,5 +179,13 @@ public class Dog {
 
     public void setxBuffer(float xBuffer) {
         this.xBuffer = xBuffer;
+    }
+
+    public float getyBuffer() {
+        return yBuffer;
+    }
+
+    public void setyBuffer(float yBuffer) {
+        this.yBuffer = yBuffer;
     }
 }// Eo Dog class

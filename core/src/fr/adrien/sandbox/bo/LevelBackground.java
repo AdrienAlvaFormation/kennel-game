@@ -64,8 +64,8 @@ public class LevelBackground {
     private void setFinishRectangle(float cameraHeight) {
         Rectangle rec = new Rectangle();
         rec.height = cameraHeight;
-        rec.width = 200;
-        rec.x = 1400;
+        rec.width = 50;
+        rec.x = 1550;
         rec.y = 0;
         this.finishRectangle = rec;
     }
