@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.*;
 import fr.adrien.sandbox.Sandbox;
 import fr.adrien.sandbox.bo.Dog;
 import fr.adrien.sandbox.bo.LevelBackground;
+import fr.adrien.sandbox.bo.Reaper;
+import fr.adrien.sandbox.controller.GamePhaseTimer;
 
 public class GameScreen implements Screen {
 
@@ -20,9 +22,11 @@ public class GameScreen implements Screen {
     public OrthographicCamera camera;
     private LevelBackground lvlBackground;
     private Dog dog;
+    private Reaper reaper;
     private GlyphLayout glyphLayout[];
     private final String GRASS_BACKGROUND_FILENAME = "grass.png";
     private TextureRegion frameBuffer = null;
+    private GamePhaseTimer timer;
 
     // CONSTRUCTOR
 
@@ -39,9 +43,13 @@ public class GameScreen implements Screen {
 
         this.dog = new Dog(200, 150, Math.round(camera.viewportWidth / 2), Math.round(camera.viewportHeight / 2));
 
+        this.reaper = new Reaper(100, 100, 1400, Math.round(camera.viewportHeight / 2 - 50));
+
         this.glyphLayout = new GlyphLayout[1];
 
         glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !");
+
+        this.timer = new GamePhaseTimer();
 
 
     }// Eo constructor
@@ -79,33 +87,49 @@ public class GameScreen implements Screen {
 
         dog.flip(); // flip character sprite to look at movement direction
 
-        game.batch.draw(lvlBackground.getBackgroundImage(),
-                        lvlBackground.getBackgroundRectangle().x,
-                        lvlBackground.getBackgroundRectangle().y,
-                        lvlBackground.getBackgroundRectangle().width,
-                        lvlBackground.getBackgroundRectangle().height);
+        game.batch.draw(
+            lvlBackground.getBackgroundImage(),
+            lvlBackground.getBackgroundRectangle().x,
+            lvlBackground.getBackgroundRectangle().y,
+            lvlBackground.getBackgroundRectangle().width,
+            lvlBackground.getBackgroundRectangle().height
+        );
 
-        game.batch.draw(lvlBackground.getFinishLine(),
-                        lvlBackground.getFinishRectangle().x - 200,
-                        lvlBackground.getFinishRectangle().y,
-                        lvlBackground.getFinishRectangle().width + 200,
-                        lvlBackground.getFinishRectangle().height);
+        game.batch.draw(
+            lvlBackground.getFinishLine(),
+            lvlBackground.getFinishRectangle().x - 200,
+            lvlBackground.getFinishRectangle().y,
+            lvlBackground.getFinishRectangle().width + 200,
+            lvlBackground.getFinishRectangle().height
+        );
+
+        game.batch.draw(
+            reaper.getOrangeTexture(),
+            reaper.getRectangle().x,
+            reaper.getRectangle().y,
+            reaper.getRectangle().width,
+            reaper.getRectangle().height
+        );
 
         if(dog.getDogRectangle().getX() != dog.getxBuffer() || dog.getDogRectangle().getY() != dog.getyBuffer())  {
-            game.batch.draw(currentFrame,
-                    dog.getDogRectangle().getX(),
-                    dog.getDogRectangle().getY(),
-                    dog.getDogRectangle().getWidth(),
-                    dog.getDogRectangle().getHeight());
+            game.batch.draw(
+                currentFrame,
+                dog.getDogRectangle().getX(),
+                dog.getDogRectangle().getY(),
+                dog.getDogRectangle().getWidth(),
+                dog.getDogRectangle().getHeight()
+            );
 
             frameBuffer = currentFrame; // dans le cas ou le personnage bouge on actualise le frameBuffer
                                        // pour pouvoir le figer quand il s'arrete.
         } else {
-            game.batch.draw(frameBuffer,
+            game.batch.draw(
+                    frameBuffer,
                     dog.getDogRectangle().getX(),
                     dog.getDogRectangle().getY(),
                     dog.getDogRectangle().getWidth(),
-                    dog.getDogRectangle().getHeight());
+                    dog.getDogRectangle().getHeight()
+            );
         }
 
         if (dog.getDogRectangle().overlaps(lvlBackground.getFinishRectangle())) {
@@ -119,6 +143,8 @@ public class GameScreen implements Screen {
         }
 
         game.batch.end();
+
+        timer.update(delta);
 
         // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
         if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
