@@ -1,9 +1,6 @@
 package fr.adrien.sandbox.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -50,7 +47,7 @@ public class GameScreen implements Screen {
 
         this.dog = new Dog(200, 150, 100, Math.round(camera.viewportHeight / 2));
 
-        this.reaper = new Reaper(100, 100, 1400, Math.round(camera.viewportHeight / 2 - 50));
+        this.reaper = new Reaper(300, 300, 1300, Math.round(camera.viewportHeight / 2 - 150));
 
         this.glyphLayout = new GlyphLayout[2];
 
@@ -86,11 +83,34 @@ public class GameScreen implements Screen {
         game.batch.begin();
 
         dog.setStateTime();
+        reaper.setStateTime();
 
-        TextureRegion currentFrame = dog.getWalkAnimation().getKeyFrame(dog.getStateTime(), true);
+        if (timer.isReturning()) {
+            reaper.setReturningStateTime();
+        }
+
+        if (timer.isWatching()) {
+            reaper.setWatchingStateTime();
+        }
+
+        TextureRegion currentFrameCharacter = dog.getWalkAnimation().getKeyFrame(dog.getStateTime(), true);
+
+        TextureRegion currentFrameReaperNotWatching = reaper.getNotWatchingAnimation().getKeyFrame(reaper.getNotWatchingStateTime(), true);
+
+        TextureRegion currentFrameReaperReturning = null;
+
+        TextureRegion currentFrameReaperWatching = null;
+
+        if (timer.isReturning()) {
+            currentFrameReaperReturning = reaper.getReturningAnimation().getKeyFrame(reaper.getReturningStateTime(), true);
+        }
+
+        if (timer.isWatching()) {
+            currentFrameReaperWatching = reaper.getWatchingAnimation().getKeyFrame(reaper.getWatchingStateTime(), true);
+        }
 
         if (frameBuffer == null) {
-            frameBuffer = currentFrame;
+            frameBuffer = currentFrameCharacter;
         }
 
         dog.flip(); // flip character sprite to look at movement direction
@@ -105,11 +125,11 @@ public class GameScreen implements Screen {
 
         // CHARACTER
 
-        drawCharacter(currentFrame);
+        drawCharacter(currentFrameCharacter);
 
         // REAPER
 
-        drawReaper();
+        drawReaper(currentFrameReaperNotWatching, currentFrameReaperReturning, currentFrameReaperWatching);
 
         // VICTORY MESSAGE
         if (dog.getDogRectangle().overlaps(lvlBackground.getFinishRectangle())) {
@@ -172,8 +192,8 @@ public class GameScreen implements Screen {
     public void dispose() {
         lvlBackground.getBackgroundImage().dispose();
         lvlBackground.getFinishLine().dispose();
-        dog.getDogImage().dispose();
         dog.getWalkSheet().dispose();
+        reaper.getNotWatchingSheet().dispose();
         reaper.getGreenTexture().dispose();
         reaper.getOrangeTexture().dispose();
         reaper.getRedTexture().dispose();
@@ -225,10 +245,10 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void drawReaper() {
+    private void drawReaper(TextureRegion notWatchingFrame, TextureRegion returningFrame, TextureRegion watchingFrame) {
         if(timer.isNotWatching()) {
             game.batch.draw(
-                    reaper.getGreenTexture(),
+                    notWatchingFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
                     reaper.getRectangle().width,
@@ -237,10 +257,13 @@ public class GameScreen implements Screen {
 
             this.playerXBuffer = dog.getDogRectangle().x;
             this.playerYBuffer = dog.getDogRectangle().y;
+
+            reaper.resetReturningStateTime();
+
 
         } else if(timer.isReturning()) {
             game.batch.draw(
-                    reaper.getOrangeTexture(),
+                    returningFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
                     reaper.getRectangle().width,
@@ -250,9 +273,11 @@ public class GameScreen implements Screen {
             this.playerXBuffer = dog.getDogRectangle().x;
             this.playerYBuffer = dog.getDogRectangle().y;
 
+            reaper.resetWatchingStateTime();
+
         } else if(timer.isWatching()) {
             game.batch.draw(
-                    reaper.getRedTexture(),
+                    watchingFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
                     reaper.getRectangle().width,

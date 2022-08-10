@@ -28,9 +28,9 @@ public class GamePhaseTimer {
         //if you have delta passed as a overload you can do
         counter -= delta; //This is smoothed but should not matter for a quiz game
 
-        System.out.println(counter);
+//        System.out.println(counter);
 
-        if(counter > 6) {
+        if(counter > 7) {
 
             this.isNotWatching = true;
             this.isReturning = false;
@@ -38,9 +38,9 @@ public class GamePhaseTimer {
 
         }
 
-        if (counter <= 6 && counter > 4)
+        if (counter <= 7 && counter > 5.1)
         {
-            System.out.println("NEAR END !");
+//            System.out.println("NEAR END !");
 
             this.isNotWatching = false;
             this.isReturning = true;
@@ -48,10 +48,10 @@ public class GamePhaseTimer {
 
         }
 
-        if (counter <= 4 && counter > 0)
+        if (counter <= 5.1 && counter > 0)
         {
 
-            System.out.println("THE EEEEEEEEEEEEEEEND");
+//            System.out.println("THE EEEEEEEEEEEEEEEND");
 
             this.isNotWatching = false;
             this.isReturning = false;

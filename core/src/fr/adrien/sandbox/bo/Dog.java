@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Dog {
 
-    private Texture dogImage;
     private Rectangle dogRectangle;
     private int dogSpeed;
 
@@ -27,8 +26,6 @@ public class Dog {
 
     // CONSTRUCTOR
     public Dog(int height, int width, int xPos, int yPos) {
-
-        this.setDogImage();
 
         this.setDogRectangle(height, width, xPos, yPos);
 
@@ -126,16 +123,9 @@ public class Dog {
 
     // ACCESSORS
 
-    public Texture getDogImage() {
-        return this.dogImage;
-    }
 
     public Rectangle getDogRectangle() {
         return this.dogRectangle;
-    }
-
-    private void setDogImage() {
-        this.dogImage =  new Texture(Gdx.files.internal("dog.png"));
     }
 
     private void setDogRectangle(int height, int width, int xPos, int yPos) {
