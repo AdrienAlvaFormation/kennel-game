@@ -14,6 +14,7 @@ public class GamePhaseTimer {
     private boolean isNotWatching;
     private boolean isReturning;
     private boolean isWatching;
+    private boolean isWatchingEnd;
 
     public GamePhaseTimer() {
 
@@ -35,27 +36,42 @@ public class GamePhaseTimer {
             this.isNotWatching = true;
             this.isReturning = false;
             this.isWatching = false;
+            this.isWatchingEnd = false;
 
         }
 
         if (counter <= 7 && counter > 5.1)
         {
-//            System.out.println("NEAR END !");
+//            System.out.println("RETURNING");
 
             this.isNotWatching = false;
             this.isReturning = true;
             this.isWatching = false;
+            this.isWatchingEnd = false;
 
         }
 
-        if (counter <= 5.1 && counter > 0)
+        if (counter <= 5.1 && counter > 3.1)
         {
 
-//            System.out.println("THE EEEEEEEEEEEEEEEND");
+//            System.out.println("WATCHING");
 
             this.isNotWatching = false;
             this.isReturning = false;
             this.isWatching = true;
+            this.isWatchingEnd = false;
+
+        }
+
+        if (counter <= 3.1 && counter > 0)
+        {
+
+//            System.out.println("WATCHING END");
+
+            this.isNotWatching = false;
+            this.isReturning = false;
+            this.isWatching = true;
+            this.isWatchingEnd = true;
 
         }
 
@@ -95,5 +111,13 @@ public class GamePhaseTimer {
 
     public void setWatching(boolean watching) {
         isWatching = watching;
+    }
+
+    public boolean isWatchingEnd() {
+        return isWatchingEnd;
+    }
+
+    public void setWatchingEnd(boolean watchingEnd) {
+        isWatchingEnd = watchingEnd;
     }
 }// Eo GamePhaseTimer class
