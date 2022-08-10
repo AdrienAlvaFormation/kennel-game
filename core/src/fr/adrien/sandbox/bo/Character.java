@@ -4,14 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Dog {
+public class Character {
 
-    private Rectangle dogRectangle;
-    private int dogSpeed;
+    private Rectangle characterRec;
+    private int characterSpeed;
 
     private final int DOG_HEIGHT = 200;
     private final int DOG_WIDTH = 125;
@@ -25,11 +24,11 @@ public class Dog {
     private float yBuffer;
 
     // CONSTRUCTOR
-    public Dog(int height, int width, int xPos, int yPos) {
+    public Character(int height, int width, int xPos, int yPos) {
 
         this.setDogRectangle(height, width, xPos, yPos);
 
-        this.dogSpeed = 300;
+        this.characterSpeed = 300;
 
         this.loadAnimation();
 
@@ -43,36 +42,36 @@ public class Dog {
     public void move() {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            this.dogRectangle.x -= this.dogSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.x -= this.characterSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            this.dogRectangle.x += this.dogSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.x += this.characterSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            this.dogRectangle.y += this.dogSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.y += this.characterSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            this.dogRectangle.y -= this.dogSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.y -= this.characterSpeed * Gdx.graphics.getDeltaTime();
         }
 
-        // make sure the bucket stays within the screen bounds
-        if (dogRectangle.x < 0) {
-            dogRectangle.x = 0;
+        // make sure the character stays within the screen bounds
+        if (characterRec.x < 0) {
+            characterRec.x = 0;
         }
 
-        if (dogRectangle.x > 1600 - DOG_WIDTH){
-            dogRectangle.x = 1600 - DOG_WIDTH;
+        if (characterRec.x > 1600 - DOG_WIDTH){
+            characterRec.x = 1600 - DOG_WIDTH;
         }
 
-        if (dogRectangle.y < 0) {
-            dogRectangle.y = 0;
+        if (characterRec.y < 0) {
+            characterRec.y = 0;
         }
 
-        if (dogRectangle.y > 600) {
-            dogRectangle.y = 600;
+        if (characterRec.y > 600) {
+            characterRec.y = 600;
         }
 
     }
@@ -80,13 +79,13 @@ public class Dog {
     public void flip() {
 
         for (TextureRegion frame: this.walkAnimation.getKeyFrames()) {
-            if(this.dogRectangle.getX() < xBuffer && !frame.isFlipX()) {
+            if(this.characterRec.getX() < xBuffer && !frame.isFlipX()) {
                 frame.flip(true, false);
             }
         }
 
         for (TextureRegion frame: this.walkAnimation.getKeyFrames()) {
-            if(this.dogRectangle.getX() > xBuffer && frame.isFlipX()) {
+            if(this.characterRec.getX() > xBuffer && frame.isFlipX()) {
                 frame.flip(true, false);
             }
         }
@@ -123,9 +122,8 @@ public class Dog {
 
     // ACCESSORS
 
-
-    public Rectangle getDogRectangle() {
-        return this.dogRectangle;
+    public Rectangle getCharacterRec() {
+        return this.characterRec;
     }
 
     private void setDogRectangle(int height, int width, int xPos, int yPos) {
@@ -135,7 +133,7 @@ public class Dog {
         dog.x = xPos;
         dog.y = yPos;
 
-        this.dogRectangle = dog;
+        this.characterRec = dog;
     }
 
     public float getStateTime() {

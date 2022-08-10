@@ -19,7 +19,7 @@ public class Reaper {
 
     private static final int NOT_WATCHING_FRAME_COLS = 5, NOT_WATCHING_FRAME_ROWS = 1;
     private static final int RETURNING_FRAME_COLS = 10, RETURNING_FRAME_ROWS = 1;
-    private static final int WATCHING_FRAME_COLS = 5, WATCHING_FRAME_ROWS = 1;
+    private static final int WATCHING_FRAME_COLS = 20, WATCHING_FRAME_ROWS = 1;
     private Animation<TextureRegion> notWatchingAnimation;
     private Animation<TextureRegion> returningAnimation;
     private Animation<TextureRegion> watchingAnimation;
@@ -104,7 +104,7 @@ public class Reaper {
     }// Eo loadAnimation()
 
     public void loadWatchingAnimation() {
-        watchingSheet = new Texture(Gdx.files.internal("animations/reaper/HostileIdleReaper-Sheet.png"));
+        watchingSheet = new Texture(Gdx.files.internal("animations/reaper/watching.png"));
 
 
         TextureRegion[][] tmp = TextureRegion.split(watchingSheet,
@@ -120,7 +120,7 @@ public class Reaper {
             }
         }
 
-        watchingAnimation = new Animation<TextureRegion>(0.2f, watchingFrames);
+        watchingAnimation = new Animation<TextureRegion>(0.1f, watchingFrames);
 
         watchingStateTime = 0f;
     }// Eo loadWatchingAnimation()

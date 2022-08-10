@@ -2,10 +2,9 @@ package fr.adrien.sandbox.screens;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import fr.adrien.sandbox.Sandbox;
-import fr.adrien.sandbox.bo.Dog;
+import fr.adrien.sandbox.bo.Character;
 import fr.adrien.sandbox.bo.LevelBackground;
 import fr.adrien.sandbox.bo.Reaper;
 import fr.adrien.sandbox.controller.GamePhaseTimer;
@@ -19,13 +18,17 @@ public class GameScreen implements Screen {
     public boolean hasLost;
     public OrthographicCamera camera;
     private LevelBackground lvlBackground;
-    private Dog dog;
+    private Character character;
     private float playerXBuffer;
     private float playerYBuffer;
     private Reaper reaper;
     private GlyphLayout glyphLayout[];
     private final String GRASS_BACKGROUND_FILENAME = "grass.png";
-    private TextureRegion frameBuffer = null;
+    private TextureRegion frameBuffer ,
+                          currentFrameCharacter,
+                          currentFrameReaperNotWatching,
+                          currentFrameReaperReturning,
+                          currentFrameReaperWatching;
     private GamePhaseTimer timer;
 
 
@@ -36,6 +39,7 @@ public class GameScreen implements Screen {
 
         this.game = game;
         this.hasWon = false;
+        this.frameBuffer = null;
 
         // create the camera
         camera = new OrthographicCamera();
@@ -43,9 +47,7 @@ public class GameScreen implements Screen {
 
         this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
 
-//        this.dog = new Dog(200, 150, Math.round(camera.viewportWidth / 2), Math.round(camera.viewportHeight / 2));
-
-        this.dog = new Dog(200, 150, 100, Math.round(camera.viewportHeight / 2));
+        this.character = new Character(200, 150, 100, Math.round(camera.viewportHeight / 2));
 
         this.reaper = new Reaper(300, 300, 1300, Math.round(camera.viewportHeight / 2 - 150));
 
@@ -82,7 +84,7 @@ public class GameScreen implements Screen {
         // DRAW
         game.batch.begin();
 
-        dog.setStateTime();
+        character.setStateTime();
         reaper.setStateTime();
 
         if (timer.isReturning()) {
@@ -93,27 +95,10 @@ public class GameScreen implements Screen {
             reaper.setWatchingStateTime();
         }
 
-        TextureRegion currentFrameCharacter = dog.getWalkAnimation().getKeyFrame(dog.getStateTime(), true);
+        getAnimationsFrames();
 
-        TextureRegion currentFrameReaperNotWatching = reaper.getNotWatchingAnimation().getKeyFrame(reaper.getNotWatchingStateTime(), true);
-
-        TextureRegion currentFrameReaperReturning = null;
-
-        TextureRegion currentFrameReaperWatching = null;
-
-        if (timer.isReturning()) {
-            currentFrameReaperReturning = reaper.getReturningAnimation().getKeyFrame(reaper.getReturningStateTime(), true);
-        }
-
-        if (timer.isWatching()) {
-            currentFrameReaperWatching = reaper.getWatchingAnimation().getKeyFrame(reaper.getWatchingStateTime(), true);
-        }
-
-        if (frameBuffer == null) {
-            frameBuffer = currentFrameCharacter;
-        }
-
-        dog.flip(); // flip character sprite to look at movement direction
+        // flip character sprite to look at movement direction
+        character.flip();
 
         // BACKGROUND
 
@@ -131,21 +116,14 @@ public class GameScreen implements Screen {
 
         drawReaper(currentFrameReaperNotWatching, currentFrameReaperReturning, currentFrameReaperWatching);
 
-        // VICTORY MESSAGE
-        if (dog.getDogRectangle().overlaps(lvlBackground.getFinishRectangle())) {
-
-            game.font.draw(game.batch, glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
-
-            this.hasWon = true;
-
+        // VICTORY MESSAGE TODO refacto condition to function
+        if (character.getCharacterRec().overlaps(lvlBackground.getFinishRectangle())) {
+            displayVictoryMsg();
         }
 
-        // LOOSE MESSAGE
-        if(timer.isWatching() && (playerXBuffer != dog.getDogRectangle().x || playerYBuffer != dog.getDogRectangle().y)){
-
-            game.font.draw(game.batch, glyphLayout[1], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
-
-            this.hasLost = true;
+        // LOOSE MESSAGE TODO refacto condition to function
+        if(timer.isWatching() && (playerXBuffer != character.getCharacterRec().x || playerYBuffer != character.getCharacterRec().y)){
+            displayLooseMsg();
         }
 
         game.batch.end();
@@ -154,16 +132,16 @@ public class GameScreen implements Screen {
         timer.update(delta);
 
         // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
-        if(dog.getDogRectangle().getX() != dog.getxBuffer()) {
-            dog.setxBuffer(dog.getDogRectangle().getX());
+        if(character.getCharacterRec().getX() != character.getxBuffer()) {
+            character.setxBuffer(character.getCharacterRec().getX());
         }
 
-        if(dog.getDogRectangle().getY() != dog.getyBuffer()) {
-            dog.setyBuffer(dog.getDogRectangle().getY());
+        if(character.getCharacterRec().getY() != character.getyBuffer()) {
+            character.setyBuffer(character.getCharacterRec().getY());
         }
 
-        if(!this.hasWon) {
-            dog.move();
+        if(!this.hasWon && !this.hasLost) {
+            character.move();
         }
 
     }// Eo render()
@@ -192,7 +170,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         lvlBackground.getBackgroundImage().dispose();
         lvlBackground.getFinishLine().dispose();
-        dog.getWalkSheet().dispose();
+        character.getWalkSheet().dispose();
         reaper.getNotWatchingSheet().dispose();
         reaper.getGreenTexture().dispose();
         reaper.getOrangeTexture().dispose();
@@ -200,7 +178,33 @@ public class GameScreen implements Screen {
         game.batch.dispose();
     }
 
-    // DRAW METHOD
+    // FRAMES METHODS
+
+    private void getAnimationsFrames(){
+
+        currentFrameCharacter = character.getWalkAnimation().getKeyFrame(character.getStateTime(), true);
+
+        currentFrameReaperNotWatching = reaper.getNotWatchingAnimation().getKeyFrame(reaper.getNotWatchingStateTime(), true);
+
+        currentFrameReaperReturning = null;
+
+        currentFrameReaperWatching = null;
+
+        if (timer.isReturning()) {
+            currentFrameReaperReturning = reaper.getReturningAnimation().getKeyFrame(reaper.getReturningStateTime(), true);
+        }
+
+        if (timer.isWatching()) {
+            currentFrameReaperWatching = reaper.getWatchingAnimation().getKeyFrame(reaper.getWatchingStateTime(), true);
+        }
+
+        if (frameBuffer == null) {
+            frameBuffer = currentFrameCharacter;
+        }
+
+    }// Eo of getAnimationsFrames()
+
+    // DRAW METHODS
 
     private void drawBackground() {
         game.batch.draw(
@@ -223,13 +227,13 @@ public class GameScreen implements Screen {
     }
 
     private void drawCharacter(TextureRegion currentFrame) {
-        if(dog.getDogRectangle().getX() != dog.getxBuffer() || dog.getDogRectangle().getY() != dog.getyBuffer())  {
+        if(character.getCharacterRec().getX() != character.getxBuffer() || character.getCharacterRec().getY() != character.getyBuffer())  {
             game.batch.draw(
                 currentFrame,
-                dog.getDogRectangle().getX(),
-                dog.getDogRectangle().getY(),
-                dog.getDogRectangle().getWidth(),
-                dog.getDogRectangle().getHeight()
+                character.getCharacterRec().getX(),
+                character.getCharacterRec().getY(),
+                character.getCharacterRec().getWidth(),
+                character.getCharacterRec().getHeight()
             );
 
             frameBuffer = currentFrame; // dans le cas ou le personnage bouge on actualise le frameBuffer
@@ -237,10 +241,10 @@ public class GameScreen implements Screen {
         } else {
             game.batch.draw(
                 frameBuffer,
-                dog.getDogRectangle().getX(),
-                dog.getDogRectangle().getY(),
-                dog.getDogRectangle().getWidth(),
-                dog.getDogRectangle().getHeight()
+                character.getCharacterRec().getX(),
+                character.getCharacterRec().getY(),
+                character.getCharacterRec().getWidth(),
+                character.getCharacterRec().getHeight()
             );
         }
     }
@@ -255,8 +259,8 @@ public class GameScreen implements Screen {
                     reaper.getRectangle().height
             );
 
-            this.playerXBuffer = dog.getDogRectangle().x;
-            this.playerYBuffer = dog.getDogRectangle().y;
+            this.playerXBuffer = character.getCharacterRec().x;
+            this.playerYBuffer = character.getCharacterRec().y;
 
             reaper.resetReturningStateTime();
 
@@ -270,8 +274,8 @@ public class GameScreen implements Screen {
                     reaper.getRectangle().height
             );
 
-            this.playerXBuffer = dog.getDogRectangle().x;
-            this.playerYBuffer = dog.getDogRectangle().y;
+            this.playerXBuffer = character.getCharacterRec().x;
+            this.playerYBuffer = character.getCharacterRec().y;
 
             reaper.resetWatchingStateTime();
 
@@ -284,6 +288,22 @@ public class GameScreen implements Screen {
                     reaper.getRectangle().height
             );
         }
-    }
+    }// Eo drawReaper()
+
+    // MESSAGE DISPLAY
+
+    private void displayLooseMsg() {
+        game.font.draw(game.batch, glyphLayout[1], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+
+        this.hasLost = true;
+    }// Eo displayLooseMsg()
+
+    private void displayVictoryMsg() {
+
+        game.font.draw(game.batch, glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
+
+        this.hasWon = true;
+
+    }// Eo displayVictoryMsg()
 
 }// Eo GameScreen class
