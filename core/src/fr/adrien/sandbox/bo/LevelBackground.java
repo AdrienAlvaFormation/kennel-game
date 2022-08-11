@@ -2,11 +2,14 @@ package fr.adrien.sandbox.bo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class LevelBackground {
 
     private Texture backgroundImage;
+    private Texture stonesFloorTile;
+    TextureRegion imgTextureRegion;
     private Rectangle backgroundRectangle;
     private Texture finishLine;
     private Rectangle finishRectangle;
@@ -34,6 +37,9 @@ public class LevelBackground {
 
     public void setBackgroundImage(String fileName) {
         this.backgroundImage = new Texture(Gdx.files.internal(fileName));
+        this.getBackgroundImage().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        this.imgTextureRegion = new TextureRegion(this.backgroundImage);
+        imgTextureRegion.setRegion(0,0,this.backgroundImage.getWidth() * 6,this.backgroundImage.getHeight() * 6);
     }
 
     public Rectangle getBackgroundRectangle() {
@@ -68,5 +74,21 @@ public class LevelBackground {
         rec.x = 1550;
         rec.y = 0;
         this.finishRectangle = rec;
+    }
+
+    public Texture getStonesFloorTile() {
+        return stonesFloorTile;
+    }
+
+    public void setStonesFloorTile() {
+        this.finishLine = new Texture(Gdx.files.internal("textures/floor-tile.png"));
+    }
+
+    public TextureRegion getImgTextureRegion() {
+        return imgTextureRegion;
+    }
+
+    public void setImgTextureRegion(TextureRegion imgTextureRegion) {
+        this.imgTextureRegion = imgTextureRegion;
     }
 }// Eo LevelBackground class

@@ -21,14 +21,16 @@ public class GameScreen implements Screen {
     public OrthographicCamera camera;
     private LevelBackground lvlBackground;
     private Player player;
-
+    private final int PLAYER_HEIGHT = 200;
+    private final int PLAYER_WIDTH = 150;
     private final int PLAYER_START_X = 150;
     private final int PLAYER_START_Y = 200;
     private float playerXBuffer;
     private float playerYBuffer;
     private Reaper reaper;
+    private final int REAPER_SIZE = 250;
     private GlyphLayout glyphLayout[];
-    private final String GRASS_BACKGROUND_FILENAME = "grass.png";
+    private final String STONES_BACKGROUND_FILENAME = "textures/floor-tile.png";
     private TextureRegion frameBuffer ,
                           currentFrameCharacter,
                           currentFrameReaperNotWatching,
@@ -46,23 +48,22 @@ public class GameScreen implements Screen {
         this.hasWon = false;
         this.frameBuffer = null;
 
+        this.setGlyphLayouts();
+
         // create the camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1600, 800);
+        camera.setToOrtho(false, 1600, 900);
 
-        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
+//        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
+        this.lvlBackground = new LevelBackground(900, 1600, STONES_BACKGROUND_FILENAME, camera.viewportHeight);
 
-        this.player = new Player(200, 150, PLAYER_START_X, Math.round(camera.viewportHeight / 2));
+        this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(camera.viewportHeight / 2));
 
-        this.reaper = new Reaper(300, 300, 1300, Math.round(camera.viewportHeight / 2 - 150));
+        this.reaper = new Reaper(REAPER_SIZE, REAPER_SIZE, 1300, Math.round(camera.viewportHeight / 2 - 150));
 
-        this.glyphLayout = new GlyphLayout[2];
-
-        glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !");
-        glyphLayout[1]=new GlyphLayout(game.font, "DEFAITE...");
+        this.glyphLayout = new GlyphLayout[3];
 
         this.timer = new GamePhaseTimer();
-
 
     }// Eo constructor
 
@@ -78,6 +79,8 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render(float delta) {
+
+        Gdx.graphics.setWindowedMode(1366, 768);
 
         // tell the camera to update its matrices.
         camera.update();
@@ -215,12 +218,13 @@ public class GameScreen implements Screen {
     // DRAW METHODS
 
     private void drawBackground() {
+
         game.batch.draw(
-            lvlBackground.getBackgroundImage(),
-            lvlBackground.getBackgroundRectangle().x,
-            lvlBackground.getBackgroundRectangle().y,
-            lvlBackground.getBackgroundRectangle().width,
-            lvlBackground.getBackgroundRectangle().height
+                lvlBackground.getImgTextureRegion(),
+                lvlBackground.getBackgroundRectangle().x,
+                lvlBackground.getBackgroundRectangle().y,
+                lvlBackground.getBackgroundRectangle().width,
+                lvlBackground.getBackgroundRectangle().height
         );
     }
 
@@ -300,15 +304,26 @@ public class GameScreen implements Screen {
 
     // MESSAGE DISPLAY
 
+    private void setGlyphLayouts() {
+        //TODO bug on glyphLayout init
+        this.glyphLayout = new GlyphLayout[3];
+
+        this.glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !");
+        this.glyphLayout[1]=new GlyphLayout(game.font, "DEFAITE...");
+        this.glyphLayout[2]=new GlyphLayout(game.font, "Appuyez sur espace [___] pour recommencer");
+    }
+
     private void displayLooseMsg() {
         game.font.draw(game.batch, glyphLayout[1], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+
+        game.font.draw(game.batch, glyphLayout[2], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
         this.hasLost = true;
     }// Eo displayLooseMsg()
 
     private void displayVictoryMsg() {
 
-        game.font.draw(game.batch, glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
+        game.font.draw(game.batch, this.glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
 
         this.hasWon = true;
 
