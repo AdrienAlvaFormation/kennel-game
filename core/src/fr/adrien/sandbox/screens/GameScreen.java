@@ -181,9 +181,8 @@ public class GameScreen implements Screen {
         lvlBackground.getFinishLine().dispose();
         player.getWalkSheet().dispose();
         reaper.getNotWatchingSheet().dispose();
-        reaper.getGreenTexture().dispose();
-        reaper.getOrangeTexture().dispose();
-        reaper.getRedTexture().dispose();
+        reaper.getReturningSheet().dispose();
+        reaper.getWatchingSheet().dispose();
         game.batch.dispose();
     }
 
@@ -326,7 +325,10 @@ public class GameScreen implements Screen {
             timer.setRandomTimer();
 
             player.getCharacterRec().setX(PLAYER_START_X);
+
+            // to fix the player looking on wrong direction on respawn. (associate to PLayer.flip() conditions)
             player.setxBuffer(player.getCharacterRec().x - 1);
+
             player.getCharacterRec().setY(Math.round(camera.viewportHeight / 2));
         }
     }// Eo restartLVL()

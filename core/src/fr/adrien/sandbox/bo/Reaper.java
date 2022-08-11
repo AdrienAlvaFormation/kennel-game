@@ -7,16 +7,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Reaper {
-
-    private Texture redTexture;
-    private Texture orangeTexture;
-    private Texture greenTexture;
     private Rectangle rectangle;
     private final int REAPER_HEIGHT = 200;
     private final int REAPER_WIDTH = 125;
 
     // Animation
-
     private static final int NOT_WATCHING_FRAME_COLS = 5, NOT_WATCHING_FRAME_ROWS = 1;
     private static final int RETURNING_FRAME_COLS = 10, RETURNING_FRAME_ROWS = 1;
     private static final int WATCHING_FRAME_COLS = 20, WATCHING_FRAME_ROWS = 1;
@@ -31,12 +26,7 @@ public class Reaper {
     private float watchingStateTime;
 
     // CONSTRUCTOR
-
-
     public Reaper(int height, int width, int xPos, int yPos) {
-        this.setGreenTexture();
-        this.setOrangeTexture();
-        this.setRedTexture();
         this.setRectangle(height, width, xPos, yPos);
 
         this.loadNotWatchingAnimation();
@@ -127,30 +117,6 @@ public class Reaper {
 
     // ACCESSORS
 
-    public Texture getRedTexture() {
-        return redTexture;
-    }
-
-    public void setRedTexture() {
-        this.redTexture =  new Texture(Gdx.files.internal("red-square.png"));
-    }
-
-    public Texture getOrangeTexture() {
-        return orangeTexture;
-    }
-
-    public void setOrangeTexture() {
-        this.orangeTexture =  new Texture(Gdx.files.internal("orange-square.png"));
-    }
-
-    public Texture getGreenTexture(){
-        return greenTexture;
-    }
-
-    public void setGreenTexture() {
-        this.greenTexture =  new Texture(Gdx.files.internal("green-square.png"));
-    }
-
     public Rectangle getRectangle() {
         return rectangle;
     }
@@ -198,9 +164,7 @@ public class Reaper {
     }
 
     public void resetReturningStateTime() {
-
         this.returningStateTime = 0f;
-
     }
 
     public Animation<TextureRegion> getReturningAnimation() {
@@ -244,8 +208,6 @@ public class Reaper {
     }
 
     public void resetWatchingStateTime() {
-
         this.watchingStateTime = 0f;
-
     }
 }// Eo Reaper class
