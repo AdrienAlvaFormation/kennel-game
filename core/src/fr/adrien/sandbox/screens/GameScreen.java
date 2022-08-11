@@ -1,10 +1,12 @@
 package fr.adrien.sandbox.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
-import fr.adrien.sandbox.Sandbox;
-import fr.adrien.sandbox.bo.Character;
+import fr.adrien.sandbox.MyGame;
+import fr.adrien.sandbox.bo.Player;
 import fr.adrien.sandbox.bo.LevelBackground;
 import fr.adrien.sandbox.bo.Reaper;
 import fr.adrien.sandbox.controller.GamePhaseTimer;
@@ -13,12 +15,15 @@ public class GameScreen implements Screen {
 
     // ATTRIBUTES
 
-    final Sandbox game;
+    final MyGame game;
     public boolean hasWon;
     public boolean hasLost;
     public OrthographicCamera camera;
     private LevelBackground lvlBackground;
-    private Character character;
+    private Player player;
+
+    private final int PLAYER_START_X = 150;
+    private final int PLAYER_START_Y = 200;
     private float playerXBuffer;
     private float playerYBuffer;
     private Reaper reaper;
@@ -35,7 +40,7 @@ public class GameScreen implements Screen {
 
     // CONSTRUCTOR
 
-    public GameScreen(final Sandbox game) {
+    public GameScreen(final MyGame game) {
 
         this.game = game;
         this.hasWon = false;
@@ -47,7 +52,7 @@ public class GameScreen implements Screen {
 
         this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
 
-        this.character = new Character(200, 150, 100, Math.round(camera.viewportHeight / 2));
+        this.player = new Player(200, 150, PLAYER_START_X, Math.round(camera.viewportHeight / 2));
 
         this.reaper = new Reaper(300, 300, 1300, Math.round(camera.viewportHeight / 2 - 150));
 
@@ -84,7 +89,7 @@ public class GameScreen implements Screen {
         // DRAW
         game.batch.begin();
 
-        character.setStateTime();
+        player.setStateTime();
         reaper.setStateTime();
 
         if (timer.isReturning()) {
@@ -98,7 +103,7 @@ public class GameScreen implements Screen {
         getAnimationsFrames();
 
         // flip character sprite to look at movement direction
-        character.flip();
+        player.flip();
 
         // BACKGROUND
 
@@ -117,12 +122,12 @@ public class GameScreen implements Screen {
         drawReaper(currentFrameReaperNotWatching, currentFrameReaperReturning, currentFrameReaperWatching);
 
         // VICTORY MESSAGE TODO refacto condition to function
-        if (character.getCharacterRec().overlaps(lvlBackground.getFinishRectangle())) {
+        if (player.getCharacterRec().overlaps(lvlBackground.getFinishRectangle())) {
             displayVictoryMsg();
         }
 
         // LOOSE MESSAGE TODO refacto condition to function
-        if(timer.isWatching() && (playerXBuffer != character.getCharacterRec().x || playerYBuffer != character.getCharacterRec().y)){
+        if(timer.isWatching() && (playerXBuffer != player.getCharacterRec().x || playerYBuffer != player.getCharacterRec().y) || this.hasLost){
             displayLooseMsg();
         }
 
@@ -132,16 +137,20 @@ public class GameScreen implements Screen {
         timer.update(delta);
 
         // si x pos actuel != x pox précédent on actualise le buffer (controle pour flip)
-        if(character.getCharacterRec().getX() != character.getxBuffer()) {
-            character.setxBuffer(character.getCharacterRec().getX());
+        if(player.getCharacterRec().getX() != player.getxBuffer()) {
+            player.setxBuffer(player.getCharacterRec().getX());
         }
 
-        if(character.getCharacterRec().getY() != character.getyBuffer()) {
-            character.setyBuffer(character.getCharacterRec().getY());
+        if(player.getCharacterRec().getY() != player.getyBuffer()) {
+            player.setyBuffer(player.getCharacterRec().getY());
         }
 
         if(!this.hasWon && !this.hasLost) {
-            character.move();
+            player.move();
+        }
+
+        if (this.hasLost) {
+            restartLVL();
         }
 
     }// Eo render()
@@ -170,7 +179,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         lvlBackground.getBackgroundImage().dispose();
         lvlBackground.getFinishLine().dispose();
-        character.getWalkSheet().dispose();
+        player.getWalkSheet().dispose();
         reaper.getNotWatchingSheet().dispose();
         reaper.getGreenTexture().dispose();
         reaper.getOrangeTexture().dispose();
@@ -182,7 +191,7 @@ public class GameScreen implements Screen {
 
     private void getAnimationsFrames(){
 
-        currentFrameCharacter = character.getWalkAnimation().getKeyFrame(character.getStateTime(), true);
+        currentFrameCharacter = player.getWalkAnimation().getKeyFrame(player.getStateTime(), true);
 
         currentFrameReaperNotWatching = reaper.getNotWatchingAnimation().getKeyFrame(reaper.getNotWatchingStateTime(), true);
 
@@ -227,13 +236,13 @@ public class GameScreen implements Screen {
     }
 
     private void drawCharacter(TextureRegion currentFrame) {
-        if(character.getCharacterRec().getX() != character.getxBuffer() || character.getCharacterRec().getY() != character.getyBuffer())  {
+        if(player.getCharacterRec().getX() != player.getxBuffer() || player.getCharacterRec().getY() != player.getyBuffer())  {
             game.batch.draw(
                 currentFrame,
-                character.getCharacterRec().getX(),
-                character.getCharacterRec().getY(),
-                character.getCharacterRec().getWidth(),
-                character.getCharacterRec().getHeight()
+                player.getCharacterRec().getX(),
+                player.getCharacterRec().getY(),
+                player.getCharacterRec().getWidth(),
+                player.getCharacterRec().getHeight()
             );
 
             frameBuffer = currentFrame; // dans le cas ou le personnage bouge on actualise le frameBuffer
@@ -241,10 +250,10 @@ public class GameScreen implements Screen {
         } else {
             game.batch.draw(
                 frameBuffer,
-                character.getCharacterRec().getX(),
-                character.getCharacterRec().getY(),
-                character.getCharacterRec().getWidth(),
-                character.getCharacterRec().getHeight()
+                player.getCharacterRec().getX(),
+                player.getCharacterRec().getY(),
+                player.getCharacterRec().getWidth(),
+                player.getCharacterRec().getHeight()
             );
         }
     }
@@ -259,8 +268,8 @@ public class GameScreen implements Screen {
                     reaper.getRectangle().height
             );
 
-            this.playerXBuffer = character.getCharacterRec().x;
-            this.playerYBuffer = character.getCharacterRec().y;
+            this.playerXBuffer = player.getCharacterRec().x;
+            this.playerYBuffer = player.getCharacterRec().y;
 
             reaper.resetReturningStateTime();
 
@@ -274,8 +283,8 @@ public class GameScreen implements Screen {
                     reaper.getRectangle().height
             );
 
-            this.playerXBuffer = character.getCharacterRec().x;
-            this.playerYBuffer = character.getCharacterRec().y;
+            this.playerXBuffer = player.getCharacterRec().x;
+            this.playerYBuffer = player.getCharacterRec().y;
 
             reaper.resetWatchingStateTime();
 
@@ -305,5 +314,23 @@ public class GameScreen implements Screen {
         this.hasWon = true;
 
     }// Eo displayVictoryMsg()
+
+    // I/O METHODS
+
+    private void restartLVL() {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            System.out.println("Pressing space-bar");
+
+            this.hasLost = false;
+
+            timer.setRandomTimer();
+
+            player.getCharacterRec().setX(PLAYER_START_X);
+            player.setxBuffer(player.getCharacterRec().x - 1);
+            player.getCharacterRec().setY(Math.round(camera.viewportHeight / 2));
+        }
+    }// Eo restartLVL()
+
+
 
 }// Eo GameScreen class

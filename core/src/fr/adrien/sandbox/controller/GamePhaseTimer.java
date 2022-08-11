@@ -7,7 +7,7 @@ public class GamePhaseTimer {
     private float time;
     private float counter = time;
     private final int MIN_TIME = 8;
-    private final int MAX_TIME = 12;
+    private final int MAX_TIME = 9;
     private int RANGE = MAX_TIME - MIN_TIME + 1;
 
     //Phase Booleans

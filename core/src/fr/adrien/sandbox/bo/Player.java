@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Character {
+public class Player {
 
     private Rectangle characterRec;
     private int characterSpeed;
@@ -24,7 +24,7 @@ public class Character {
     private float yBuffer;
 
     // CONSTRUCTOR
-    public Character(int height, int width, int xPos, int yPos) {
+    public Player(int height, int width, int xPos, int yPos) {
 
         this.setDogRectangle(height, width, xPos, yPos);
 

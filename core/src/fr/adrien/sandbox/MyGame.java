@@ -1,16 +1,12 @@
 package fr.adrien.sandbox;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.utils.ScreenUtils;
-import fr.adrien.sandbox.screens.GameScreen;
 
-public class Sandbox extends Game {
+public class MyGame extends Game {
 
 	public SpriteBatch batch;
 	public BitmapFont font;
@@ -24,7 +20,7 @@ public class Sandbox extends Game {
 
 		font = generator.generateFont(parameter);
 
-		this.setScreen(new GameScreen(this));
+		this.setScreen(new fr.adrien.sandbox.screens.GameScreen(this));
 	}
 
 	public void render() {
