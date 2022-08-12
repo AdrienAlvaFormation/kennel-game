@@ -6,12 +6,18 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class SpeedBoost {
 
+
+
     private Texture BoostTexture;
     private Rectangle boostRec;
     private float boostHeight;
     private float boostWidth;
     private float boostX;
     private float boostY;
+    private static final float RANGE_X = 1000;
+    private static final float MIN_X = 200;
+    private static final float RANGE_Y = 450;
+    private static final float MIN_Y = 200 ;
     private boolean consume;
 
     public SpeedBoost() {
@@ -21,11 +27,13 @@ public class SpeedBoost {
         this.boostHeight = 60;
         this.boostWidth = 60;
 
-        this.boostX = 500;
-        this.boostY = 500;
+//        this.boostX = 500;
+//        this.boostY = 500;
 
         this.setBoostTexture();
         this.setBoostRec();
+
+        this.setBoostPos();
     }
 
     public Texture getBoostTexture() {
@@ -63,6 +71,16 @@ public class SpeedBoost {
 
     public void setBoostY(float boostY) {
         this.boostY = boostY;
+    }
+
+    public void setBoostPos() {
+
+        this.getBoostRec().x = (float)(Math.random() * RANGE_X) + MIN_X;
+        this.getBoostRec().y = (float)(Math.random() * RANGE_Y) + MIN_Y;
+
+        System.out.println("X : " + getBoostRec().x);
+        System.out.println("Y" + getBoostRec().y);
+
     }
 
     public boolean isConsume() {

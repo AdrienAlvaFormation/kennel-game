@@ -183,7 +183,6 @@ public class GameScreen implements Screen {
 
         if (this.hasLost || this.hasWon) {
             restartLVL();
-
         }
 
     }// Eo render()
@@ -346,14 +345,6 @@ public class GameScreen implements Screen {
 
     }// Eo drawSpeedBoost()
 
-    // BOOSTS
-
-    private void reloadBoosts() {
-
-        this.speedBoost.setConsume(false);
-
-    }// Eo reloadBoosts()
-
     // MESSAGE DISPLAY
 
     private void setGlyphLayouts() {
@@ -411,6 +402,14 @@ public class GameScreen implements Screen {
         player.setPlayerSpeed(300);
 
     }// Eo resetPlayer()
+
+    private void reloadBoosts() {
+
+        this.speedBoost.setConsume(false);
+
+        this.speedBoost.setBoostPos();
+
+    }// Eo reloadBoosts()
 
     // UTILS METHODS
 
