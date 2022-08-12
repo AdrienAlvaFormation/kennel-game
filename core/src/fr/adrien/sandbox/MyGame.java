@@ -2,23 +2,20 @@ package fr.adrien.sandbox;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class MyGame extends Game {
 
-	public SpriteBatch batch;
-	public BitmapFont font;
+	private SpriteBatch batch;
+	private FreeTypeFontGenerator generator;
+	private FreeTypeFontGenerator.FreeTypeFontParameter fontParameter;
 
 	public void create() {
 		batch = new SpriteBatch();
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Oswald-Regular.ttf"));
-		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		parameter.size = 200;
-
-		font = generator.generateFont(parameter);
+		generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Oswald-Regular.ttf"));
+		fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
 		this.setScreen(new fr.adrien.sandbox.screens.GameScreen(this));
 	}
@@ -29,7 +26,20 @@ public class MyGame extends Game {
 
 	public void dispose() {
 		batch.dispose();
-		font.dispose();
+		generator.dispose();
 	}
+
+	public SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public FreeTypeFontGenerator getGenerator() {
+		return generator;
+	}
+
+	public FreeTypeFontGenerator.FreeTypeFontParameter getFontParameter() {
+		return fontParameter;
+	}
+
 
 }// Eo Sandbox

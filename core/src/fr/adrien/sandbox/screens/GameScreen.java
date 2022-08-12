@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import fr.adrien.sandbox.MyGame;
 import fr.adrien.sandbox.bo.Player;
 import fr.adrien.sandbox.bo.LevelBackground;
@@ -30,6 +31,8 @@ public class GameScreen implements Screen {
     private Reaper reaper;
     private final int REAPER_SIZE = 250;
     private GlyphLayout glyphLayout[];
+    public BitmapFont fontWinLooseTitle;
+    public BitmapFont fontUnderTextLoose;
     private final String STONES_BACKGROUND_FILENAME = "textures/floor-tile.png";
     private TextureRegion frameBuffer ,
                           currentFrameCharacter,
@@ -37,6 +40,12 @@ public class GameScreen implements Screen {
                           currentFrameReaperReturning,
                           currentFrameReaperWatching;
     private GamePhaseTimer timer;
+
+    //Fonts
+//    private FreeTypeFontGenerator getGenerator(;
+//    private FreeTypeFontGenerator.FreeTypeFontParameter getFontParameter(
+
+//    private BitmapFont font;
 
 
 
@@ -55,13 +64,23 @@ public class GameScreen implements Screen {
 //        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
         this.lvlBackground = new LevelBackground(900, 1600, STONES_BACKGROUND_FILENAME, camera.viewportHeight);
 
-        this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(camera.viewportHeight / 2 - 100));
+        this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(this.viewportHeightCenter() - 100));
 
-        this.reaper = new Reaper(REAPER_SIZE, REAPER_SIZE, 1300, Math.round(camera.viewportHeight / 2 - 150));
+        this.reaper = new Reaper(REAPER_SIZE, REAPER_SIZE, 1300, Math.round(this.viewportHeightCenter() - 150));
 
         this.glyphLayout = new GlyphLayout[3];
 
+        game.getFontParameter().size = 100;
+        fontWinLooseTitle = game.getGenerator().generateFont(game.getFontParameter());
+        game.getFontParameter().size = 50;
+        fontUnderTextLoose = game.getGenerator().generateFont(game.getFontParameter());
+
         this.setGlyphLayouts();
+
+//        this.getGenerator( = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Oswald-Regular.ttf"));
+//        this.getFontParameter( = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+
 
         this.timer = new GamePhaseTimer();
 
@@ -87,10 +106,10 @@ public class GameScreen implements Screen {
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
-        game.batch.setProjectionMatrix(camera.combined);
+        game.getBatch().setProjectionMatrix(camera.combined);
 
         // DRAW
-        game.batch.begin();
+        game.getBatch().begin();
 
         player.setStateTime();
         reaper.setStateTime();
@@ -134,7 +153,7 @@ public class GameScreen implements Screen {
             displayLooseMsg();
         }
 
-        game.batch.end();
+        game.getBatch().end();
         ////////////////
 
         timer.update(delta);
@@ -152,7 +171,7 @@ public class GameScreen implements Screen {
             player.move();
         }
 
-        if (this.hasLost) {
+        if (this.hasLost || this.hasWon) {
             restartLVL();
         }
 
@@ -186,7 +205,9 @@ public class GameScreen implements Screen {
         reaper.getNotWatchingSheet().dispose();
         reaper.getReturningSheet().dispose();
         reaper.getWatchingSheet().dispose();
-        game.batch.dispose();
+        game.getBatch().dispose();
+        this.fontWinLooseTitle.dispose();
+        this.fontUnderTextLoose.dispose();
     }
 
     // FRAMES METHODS
@@ -219,7 +240,7 @@ public class GameScreen implements Screen {
 
     private void drawBackground() {
 
-        game.batch.draw(
+        game.getBatch().draw(
                 lvlBackground.getImgTextureRegion(),
                 lvlBackground.getBackgroundRectangle().x,
                 lvlBackground.getBackgroundRectangle().y,
@@ -229,7 +250,7 @@ public class GameScreen implements Screen {
     }
 
     private void drawFinishLine() {
-        game.batch.draw(
+        game.getBatch().draw(
             lvlBackground.getFinishLine(),
             lvlBackground.getFinishRectangle().x - 200,
             lvlBackground.getFinishRectangle().y,
@@ -240,7 +261,7 @@ public class GameScreen implements Screen {
 
     private void drawCharacter(TextureRegion currentFrame) {
         if(player.getCharacterRec().getX() != player.getxBuffer() || player.getCharacterRec().getY() != player.getyBuffer())  {
-            game.batch.draw(
+            game.getBatch().draw(
                 currentFrame,
                 player.getCharacterRec().getX(),
                 player.getCharacterRec().getY(),
@@ -251,7 +272,7 @@ public class GameScreen implements Screen {
             frameBuffer = currentFrame; // dans le cas ou le personnage bouge on actualise le frameBuffer
             // pour pouvoir le figer quand il s'arrete.
         } else {
-            game.batch.draw(
+            game.getBatch().draw(
                 frameBuffer,
                 player.getCharacterRec().getX(),
                 player.getCharacterRec().getY(),
@@ -263,7 +284,7 @@ public class GameScreen implements Screen {
 
     private void drawReaper(TextureRegion notWatchingFrame, TextureRegion returningFrame, TextureRegion watchingFrame) {
         if(timer.isNotWatching()) {
-            game.batch.draw(
+            game.getBatch().draw(
                     notWatchingFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
@@ -278,7 +299,7 @@ public class GameScreen implements Screen {
 
 
         } else if(timer.isReturning()) {
-            game.batch.draw(
+            game.getBatch().draw(
                     returningFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
@@ -292,7 +313,7 @@ public class GameScreen implements Screen {
             reaper.resetWatchingStateTime();
 
         } else if(timer.isWatching()) {
-            game.batch.draw(
+            game.getBatch().draw(
                     watchingFrame,
                     reaper.getRectangle().x,
                     reaper.getRectangle().y,
@@ -305,25 +326,26 @@ public class GameScreen implements Screen {
     // MESSAGE DISPLAY
 
     private void setGlyphLayouts() {
-        //TODO bug on glyphLayout init
+
         this.glyphLayout = new GlyphLayout[3];
 
-        this.glyphLayout[0]=new GlyphLayout(game.font, "VICTOIRE !");
-        this.glyphLayout[1]=new GlyphLayout(game.font, "DEFAITE...");
-        this.glyphLayout[2]=new GlyphLayout(game.font, "Appuyez sur espace [___] pour recommencer");
+        this.glyphLayout[0]=new GlyphLayout(fontWinLooseTitle, "VICTOIRE !");
+        this.glyphLayout[1]=new GlyphLayout(fontWinLooseTitle, "DEFAITE...");
+        this.glyphLayout[2]=new GlyphLayout(fontUnderTextLoose, "Appuyez sur espace [___] pour recommencer");
     }
 
     private void displayLooseMsg() {
-        game.font.draw(game.batch, glyphLayout[1], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
-//        game.font.draw(game.batch, glyphLayout[2], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+        fontWinLooseTitle.draw(game.getBatch(), glyphLayout[1], this.viewportWidthCenter() - (glyphLayout[1].width / 2), this.viewportHeightCenter() + (glyphLayout[1].height / 2));
+
+        fontUnderTextLoose.draw(game.getBatch(), glyphLayout[2], this.viewportWidthCenter() - (glyphLayout[2].width / 2), this.viewportHeightCenter() + (glyphLayout[2].height / 2) - 150);
 
         this.hasLost = true;
     }// Eo displayLooseMsg()
 
     private void displayVictoryMsg() {
 
-        game.font.draw(game.batch, this.glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
+        fontWinLooseTitle.draw(game.getBatch(), this.glyphLayout[0], this.viewportWidthCenter() - (glyphLayout[0].width / 2), this.viewportHeightCenter() + (glyphLayout[0].height / 2));
 
         this.hasWon = true;
 
@@ -336,6 +358,7 @@ public class GameScreen implements Screen {
             System.out.println("Pressing space-bar");
 
             this.hasLost = false;
+            this.hasWon = false;
 
             timer.setRandomTimer();
 
@@ -344,10 +367,22 @@ public class GameScreen implements Screen {
             // to fix the player looking on wrong direction on respawn. (associate to PLayer.flip() conditions)
             player.setxBuffer(player.getCharacterRec().x - 1);
 
-            player.getCharacterRec().setY(Math.round(camera.viewportHeight / 2));
+            player.getCharacterRec().setY(Math.round(this.viewportHeightCenter()));
         }
     }// Eo restartLVL()
 
+    // UTILS METHODS
 
+    private float viewportWidthCenter() {
+
+        return this.camera.viewportWidth / 2 ;
+
+    }// Eo viewportWidthCenter()
+
+    private float viewportHeightCenter() {
+
+        return this.camera.viewportHeight / 2 ;
+
+    }// Eo viewportHeightCenter()
 
 }// Eo GameScreen class

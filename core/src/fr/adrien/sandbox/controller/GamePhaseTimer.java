@@ -27,7 +27,7 @@ public class GamePhaseTimer {
 
         if(counter > 7) {
 
-            System.out.println("SLEEPING");
+//            System.out.println("SLEEPING");
 
             this.isNotWatching = true;
             this.isReturning = false;
@@ -35,7 +35,7 @@ public class GamePhaseTimer {
 
         } else if (counter <= 5.5 && counter > 3.6) {
 
-            System.out.println("WAKING UP");
+//            System.out.println("WAKING UP");
 
             this.isNotWatching = false;
             this.isReturning = true;
@@ -43,7 +43,7 @@ public class GamePhaseTimer {
 
         } else if (counter <= 3.6 && counter > 0) {
 
-            System.out.println("WATCHING");
+//            System.out.println("WATCHING");
 
             this.isNotWatching = false;
             this.isReturning = false;
