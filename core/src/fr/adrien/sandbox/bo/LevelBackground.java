@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Rectangle;
 public class LevelBackground {
 
     private Texture backgroundImage;
-    private Texture stonesFloorTile;
     TextureRegion imgTextureRegion;
     private Rectangle backgroundRectangle;
     private Texture finishLine;
@@ -74,14 +73,6 @@ public class LevelBackground {
         rec.x = 1550;
         rec.y = 0;
         this.finishRectangle = rec;
-    }
-
-    public Texture getStonesFloorTile() {
-        return stonesFloorTile;
-    }
-
-    public void setStonesFloorTile() {
-        this.finishLine = new Texture(Gdx.files.internal("textures/floor-tile.png"));
     }
 
     public TextureRegion getImgTextureRegion() {

@@ -10,6 +10,7 @@ import fr.adrien.sandbox.MyGame;
 import fr.adrien.sandbox.bo.Player;
 import fr.adrien.sandbox.bo.LevelBackground;
 import fr.adrien.sandbox.bo.Reaper;
+import fr.adrien.sandbox.bo.SpeedBoost;
 import fr.adrien.sandbox.controller.GamePhaseTimer;
 
 public class GameScreen implements Screen {
@@ -30,6 +31,8 @@ public class GameScreen implements Screen {
     private float playerYBuffer;
     private Reaper reaper;
     private final int REAPER_SIZE = 250;
+
+    private SpeedBoost speedBoost;
     private GlyphLayout glyphLayout[];
     public BitmapFont fontWinLooseTitle;
     public BitmapFont fontUnderTextLoose;
@@ -40,13 +43,6 @@ public class GameScreen implements Screen {
                           currentFrameReaperReturning,
                           currentFrameReaperWatching;
     private GamePhaseTimer timer;
-
-    //Fonts
-//    private FreeTypeFontGenerator getGenerator(;
-//    private FreeTypeFontGenerator.FreeTypeFontParameter getFontParameter(
-
-//    private BitmapFont font;
-
 
 
     // CONSTRUCTOR
@@ -61,12 +57,17 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1600, 900);
 
-//        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
+        // BO
+
         this.lvlBackground = new LevelBackground(900, 1600, STONES_BACKGROUND_FILENAME, camera.viewportHeight);
 
         this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(this.viewportHeightCenter() - 100));
 
         this.reaper = new Reaper(REAPER_SIZE, REAPER_SIZE, 1300, Math.round(this.viewportHeightCenter() - 150));
+
+        this.speedBoost = new SpeedBoost();
+
+        /* */
 
         this.glyphLayout = new GlyphLayout[3];
 
@@ -76,11 +77,6 @@ public class GameScreen implements Screen {
         fontUnderTextLoose = game.getGenerator().generateFont(game.getFontParameter());
 
         this.setGlyphLayouts();
-
-//        this.getGenerator( = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Oswald-Regular.ttf"));
-//        this.getFontParameter( = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-
 
         this.timer = new GamePhaseTimer();
 
@@ -143,6 +139,19 @@ public class GameScreen implements Screen {
 
         drawReaper(currentFrameReaperNotWatching, currentFrameReaperReturning, currentFrameReaperWatching);
 
+        // SPEEDBOOST
+
+        if (!this.speedBoost.isConsume()) {
+            drawSpeedBoost();
+
+            if (player.getCharacterRec().overlaps(speedBoost.getBoostRec())) {
+                this.speedBoost.setConsume(true);
+                this.player.setPlayerSpeed(600);
+                this.player.setFrameDuration(0.0125f);
+                this.player.loadAnimation();
+            }
+        }
+
         // VICTORY MESSAGE TODO refacto condition to function
         if (player.getCharacterRec().overlaps(lvlBackground.getFinishRectangle())) {
             displayVictoryMsg();
@@ -173,6 +182,7 @@ public class GameScreen implements Screen {
 
         if (this.hasLost || this.hasWon) {
             restartLVL();
+
         }
 
     }// Eo render()
@@ -323,6 +333,26 @@ public class GameScreen implements Screen {
         }
     }// Eo drawReaper()
 
+    private void drawSpeedBoost() {
+
+        game.getBatch().draw(
+                speedBoost.getBoostTexture(),
+                speedBoost.getBoostRec().x,
+                speedBoost.getBoostRec().y,
+                speedBoost.getBoostRec().width,
+                speedBoost.getBoostRec().height
+        );
+
+    }// Eo drawSpeedBoost()
+
+    // BOOSTS
+
+    private void reloadBoosts() {
+
+        this.speedBoost.setConsume(false);
+
+    }// Eo reloadBoosts()
+
     // MESSAGE DISPLAY
 
     private void setGlyphLayouts() {
@@ -351,7 +381,7 @@ public class GameScreen implements Screen {
 
     }// Eo displayVictoryMsg()
 
-    // I/O METHODS
+    // RESET
 
     private void restartLVL() {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -362,14 +392,24 @@ public class GameScreen implements Screen {
 
             timer.setRandomTimer();
 
-            player.getCharacterRec().setX(PLAYER_START_X);
+            resetPlayer();
 
-            // to fix the player looking on wrong direction on respawn. (associate to PLayer.flip() conditions)
-            player.setxBuffer(player.getCharacterRec().x - 1);
-
-            player.getCharacterRec().setY(Math.round(this.viewportHeightCenter()));
+            reloadBoosts();
         }
     }// Eo restartLVL()
+
+    private void resetPlayer() {
+
+        player.getCharacterRec().setX(PLAYER_START_X);
+
+        // to fix the player looking on wrong direction on respawn. (associate to PLayer.flip() conditions)
+        player.setxBuffer(player.getCharacterRec().x - 1);
+
+        player.getCharacterRec().setY(Math.round(this.viewportHeightCenter()));
+
+        player.setPlayerSpeed(300);
+
+    }// Eo resetPlayer()
 
     // UTILS METHODS
 
@@ -384,5 +424,7 @@ public class GameScreen implements Screen {
         return this.camera.viewportHeight / 2 ;
 
     }// Eo viewportHeightCenter()
+
+
 
 }// Eo GameScreen class

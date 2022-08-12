@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Player {
 
     private Rectangle characterRec;
-    private int characterSpeed;
+    private int playerSpeed;
 
     private final int DOG_HEIGHT = 200;
     private final int DOG_WIDTH = 125;
@@ -20,15 +20,19 @@ public class Player {
     private Animation<TextureRegion> walkAnimation;
     private Texture walkSheet;
     private float stateTime;
+    private float frameDuration;
     private float xBuffer;
     private float yBuffer;
+
 
     // CONSTRUCTOR
     public Player(int height, int width, int xPos, int yPos) {
 
-        this.setDogRectangle(height, width, xPos, yPos);
+        this.setPlayerRectangle(height, width, xPos, yPos);
 
-        this.characterSpeed = 300;
+        this.playerSpeed = 300;
+
+        this.frameDuration = 0.025f;
 
         this.loadAnimation();
 
@@ -42,19 +46,19 @@ public class Player {
     public void move() {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            this.characterRec.x -= this.characterSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.x -= this.playerSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            this.characterRec.x += this.characterSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.x += this.playerSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            this.characterRec.y += this.characterSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.y += this.playerSpeed * Gdx.graphics.getDeltaTime();
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            this.characterRec.y -= this.characterSpeed * Gdx.graphics.getDeltaTime();
+            this.characterRec.y -= this.playerSpeed * Gdx.graphics.getDeltaTime();
         }
 
         // make sure the character stays within the screen bounds
@@ -92,7 +96,7 @@ public class Player {
 
     }// Eo flip()
 
-    private void loadAnimation() {
+    public void loadAnimation() {
         // Load the sprite sheet as a Texture
         walkSheet = new Texture(Gdx.files.internal("animation_sheet.png"));
 
@@ -114,7 +118,9 @@ public class Player {
         }
 
         // Initialize the Animation with the frame interval and array of frames
-        walkAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
+        walkAnimation = new Animation<TextureRegion>(frameDuration, walkFrames);
+
+        System.out.println(frameDuration);
 
         // time to 0
         stateTime = 0f;
@@ -126,14 +132,14 @@ public class Player {
         return this.characterRec;
     }
 
-    private void setDogRectangle(int height, int width, int xPos, int yPos) {
-        Rectangle dog = new Rectangle();
-        dog.height = height;
-        dog.width = width;
-        dog.x = xPos;
-        dog.y = yPos;
+    private void setPlayerRectangle(int height, int width, int xPos, int yPos) {
+        Rectangle rec = new Rectangle();
+        rec.height = height;
+        rec.width = width;
+        rec.x = xPos;
+        rec.y = yPos;
 
-        this.characterRec = dog;
+        this.characterRec = rec;
     }
 
     public float getStateTime() {
@@ -174,5 +180,21 @@ public class Player {
 
     public void setyBuffer(float yBuffer) {
         this.yBuffer = yBuffer;
+    }
+
+    public int getPlayerSpeed() {
+        return playerSpeed;
+    }
+
+    public void setPlayerSpeed(int playerSpeed) {
+        this.playerSpeed = playerSpeed;
+    }
+
+    public float getFrameDuration() {
+        return frameDuration;
+    }
+
+    public void setFrameDuration(float frameDuration) {
+        this.frameDuration = frameDuration;
     }
 }// Eo Dog class
