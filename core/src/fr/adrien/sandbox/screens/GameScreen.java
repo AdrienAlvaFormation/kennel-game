@@ -48,8 +48,6 @@ public class GameScreen implements Screen {
         this.hasWon = false;
         this.frameBuffer = null;
 
-        this.setGlyphLayouts();
-
         // create the camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1600, 900);
@@ -57,11 +55,13 @@ public class GameScreen implements Screen {
 //        this.lvlBackground = new LevelBackground(800, 1600, GRASS_BACKGROUND_FILENAME, camera.viewportHeight);
         this.lvlBackground = new LevelBackground(900, 1600, STONES_BACKGROUND_FILENAME, camera.viewportHeight);
 
-        this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(camera.viewportHeight / 2));
+        this.player = new Player(PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_START_X, Math.round(camera.viewportHeight / 2 - 100));
 
         this.reaper = new Reaper(REAPER_SIZE, REAPER_SIZE, 1300, Math.round(camera.viewportHeight / 2 - 150));
 
         this.glyphLayout = new GlyphLayout[3];
+
+        this.setGlyphLayouts();
 
         this.timer = new GamePhaseTimer();
 
@@ -317,6 +317,7 @@ public class GameScreen implements Screen {
         game.font.draw(game.batch, glyphLayout[1], this.viewportWidthCenter() - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
         game.font.draw(game.batch, glyphLayout[2], this.viewportWidthCenter() - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+//        game.font.draw(game.batch, glyphLayout[2], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
         this.hasLost = true;
     }// Eo displayLooseMsg()
