@@ -314,16 +314,16 @@ public class GameScreen implements Screen {
     }
 
     private void displayLooseMsg() {
-        game.font.draw(game.batch, glyphLayout[1], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+        game.font.draw(game.batch, glyphLayout[1], this.viewportWidthCenter() - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
-        game.font.draw(game.batch, glyphLayout[2], camera.viewportWidth / 2 - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
+        game.font.draw(game.batch, glyphLayout[2], this.viewportWidthCenter() - (glyphLayout[1].width / 2), camera.viewportHeight / 2 + (glyphLayout[1 ].height / 2));
 
         this.hasLost = true;
     }// Eo displayLooseMsg()
 
     private void displayVictoryMsg() {
 
-        game.font.draw(game.batch, this.glyphLayout[0], camera.viewportWidth / 2 - (glyphLayout[0].width / 2), camera.viewportHeight / 2 + (glyphLayout[0].height / 2));
+        game.font.draw(game.batch, this.glyphLayout[0], this.viewportWidthCenter() - (glyphLayout[0].width / 2), this.viewportHeightCenter() + (glyphLayout[0].height / 2));
 
         this.hasWon = true;
 
@@ -344,9 +344,23 @@ public class GameScreen implements Screen {
             // to fix the player looking on wrong direction on respawn. (associate to PLayer.flip() conditions)
             player.setxBuffer(player.getCharacterRec().x - 1);
 
-            player.getCharacterRec().setY(Math.round(camera.viewportHeight / 2));
+            player.getCharacterRec().setY(Math.round(this.viewportHeightCenter()));
         }
     }// Eo restartLVL()
+
+    // UTILS METHODS
+
+    private float viewportWidthCenter() {
+
+        return this.viewportWidthCenter() ;
+
+    }// Eo viewportWidthCenter()
+
+    private float viewportHeightCenter() {
+
+        return camera.viewportHeight / 2 ;
+
+    }// Eo viewportHeightCenter()
 
 
 
